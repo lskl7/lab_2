@@ -9,23 +9,23 @@ from postal_codes import find_postal_codes
 from sources import read_file, read_url
 
 
-# Проверяет чтение файлов и получение текста с веб-страниц.
+# Проверяет чтение файлов и получение текста с веб-страниц
 class SourceTests(unittest.TestCase):
-    # Проверяет чтение файла в UTF-8 с меткой порядка байтов.
+    # Проверяет чтение файла в UTF-8 с меткой порядка байтов
     def test_utf8_file_with_bom(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "адреса.txt"
             path.write_text("Индекс 101000", encoding="utf-8-sig")
             self.assertEqual(read_file(path), "Индекс 101000")
 
-    # Проверяет извлечение индексов из соседних абзацев HTML-файла.
+    # Проверяет извлечение индексов из соседних абзацев HTML-файла
     def test_html_file(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "адреса.html"
             path.write_text("<p>101000</p><p>190000</p>", encoding="utf-8")
             self.assertEqual(find_postal_codes(read_file(path)), ["101000", "190000"])
 
-    # Проверяет декодирование страницы и поиск индексов в её тексте.
+    # Проверяет декодирование страницы и поиск индексов в её тексте
     @patch("sources.urlopen")
     def test_html_page(self, urlopen):
         html = (
@@ -42,7 +42,7 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(find_postal_codes(text), ["101000", "190000"])
         urlopen.assert_called_once_with("https://example.com", timeout=10)
 
-    # Проверяет, что неподдерживаемый URL отклоняется до сетевого запроса.
+    # Проверяет, что неподдерживаемый URL отклоняется до сетевого запроса
     @patch("sources.urlopen")
     def test_invalid_url_is_rejected_before_request(self, urlopen):
         with self.assertRaises(ValueError):
