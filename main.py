@@ -1,5 +1,3 @@
-# Консольная утилита для проверки и поиска почтовых индексов.
-
 import sys
 from http.client import HTTPException
 from pathlib import Path
@@ -17,7 +15,6 @@ MENU = """
 """
 
 
-# Выводит найденные индексы по одному на строку или сообщает об их отсутствии.
 def print_matches(text: str) -> None:
     matches = find_postal_codes(text)
     if matches:
@@ -26,7 +23,6 @@ def print_matches(text: str) -> None:
         print("Почтовые индексы не найдены.")
 
 
-# Показывает меню и выполняет выбранные действия до выхода из программы.
 def main() -> None:
     try:
         while True:
