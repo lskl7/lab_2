@@ -1,4 +1,4 @@
-# Чтение текста из локального файла или с веб-страницы.
+# Чтение текста из локального файла или с веб-страницы
 
 from html.parser import HTMLParser
 from pathlib import Path
@@ -14,22 +14,22 @@ _BLOCK_TAGS = {
 _HIDDEN_TAGS = {"head", "script", "style", "template"}
 
 
-# Извлекает текст страницы, пропуская содержимое служебных тегов.
+# Извлекает текст страницы, пропуская содержимое служебных тегов
 class _PageTextParser(HTMLParser):
-    # Создаёт списки для фрагментов текста и открытых служебных тегов.
+    # Создаёт списки для фрагментов текста и открытых служебных тегов
     def __init__(self) -> None:
         super().__init__()
         self.parts: list[str] = []
         self.hidden_tags: list[str] = []
 
-    # Запоминает начало служебного тега или добавляет пробел перед текстовым блоком.
+    # Запоминает начало служебного тега или добавляет пробел перед текстовым блоком
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in _HIDDEN_TAGS:
             self.hidden_tags.append(tag)
         elif not self.hidden_tags and tag in _BLOCK_TAGS:
             self.parts.append(" ")
 
-    # Завершает пропуск служебного тега или добавляет пробел после текстового блока.
+    # Завершает пропуск служебного тега или добавляет пробел после текстового блока
     def handle_endtag(self, tag: str) -> None:
         if self.hidden_tags:
             if tag == self.hidden_tags[-1]:
@@ -37,13 +37,13 @@ class _PageTextParser(HTMLParser):
         elif tag in _BLOCK_TAGS:
             self.parts.append(" ")
 
-    # Сохраняет текст вне служебных тегов.
+    # Сохраняет текст вне служебных тегов
     def handle_data(self, data: str) -> None:
         if not self.hidden_tags:
             self.parts.append(data)
 
 
-# Разбирает HTML и объединяет извлечённые фрагменты текста.
+# Разбирает HTML и объединяет извлечённые фрагменты текста
 def _html_to_text(html: str) -> str:
     parser = _PageTextParser()
     parser.feed(html)
@@ -51,7 +51,7 @@ def _html_to_text(html: str) -> str:
     return "".join(parser.parts)
 
 
-# Читает файл в UTF-8 и извлекает текст, если файл содержит HTML.
+# Читает файл в UTF-8 и извлекает текст, если файл содержит HTML
 def read_file(path: Path) -> str:
     text = path.read_text(encoding="utf-8-sig")
     if path.suffix.lower() in {".html", ".htm"}:
@@ -60,7 +60,7 @@ def read_file(path: Path) -> str:
 
 
 # https://indexphone.ru/post/1405113
-# Загружает страницу по HTTP или HTTPS и возвращает её текст.
+# Загружает страницу по HTTP или HTTPS и возвращает её текст
 def read_url(url: str) -> str:
     address = urlsplit(url)
     if address.scheme not in {"http", "https"} or not address.hostname:
